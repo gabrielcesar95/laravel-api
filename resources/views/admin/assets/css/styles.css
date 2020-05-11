@@ -1,0 +1,28 @@
+[data-sort]:hover{
+    cursor: pointer;
+}
+[data-sort].asc{
+
+}
+
+.c-pointer{
+    cursor: pointer;
+}
+
+.toggle.btn{
+    min-height: calc(1.6em + 0.75rem + 2px);
+}
+
+.custom-file .custom-file-label:after{
+    content: 'Buscar';
+}
+
+.post-show-content{
+    max-height: 300px;
+    overflow: auto;
+}
+
+button#btn-notifications:focus{
+    outline: 0;
+    box-shadow: none;
+}

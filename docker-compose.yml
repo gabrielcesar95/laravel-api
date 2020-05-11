@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+    #Application
+    application:
+        build:
+            context: .
+            dockerfile: .dockerfile
+        image: gabrielcesar95/${APP_CONTAINER_NAME}
+        container_name: ${APP_CONTAINER_NAME}_application
+        restart: unless-stopped
+        tty: true
+        environment:
+            SERVICE_NAME: application
+            SERVICE_TAGS: dev
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www/
+            - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - network
+
+    #Nginx Service
+    webserver:
+        image: nginx:alpine
+        container_name: ${APP_CONTAINER_NAME}_webserver
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "2080:80"
+            - "2443:443"
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+        networks:
+            - network
+
+    #MariaDB Service
+    db:
+        image: mariadb:10.4.12
+        container_name: ${APP_CONTAINER_NAME}_db
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "2306:3306"
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            SERVICE_NAME: mariadb
+            SERVICE_TAGS: dev
+        volumes:
+            - dbdata:/var/lib/mysql
+            - ./docker/mariadb/my.cnf:/etc/mysql/my.cnf
+        networks:
+            - network
+
+#Network
+networks:
+    network:
+        driver: bridge
+
+#Volumes
+volumes:
+    dbdata:
+        driver: local
+
